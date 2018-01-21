@@ -1,0 +1,12 @@
+name: violent_crime
+title: violent_crime
+username:
+account: yvonnedy
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 258926
+bundleId: 1185548
+url: https://yvonnedy.shinyapps.io/violent_crime/
+when: 1516544695.7222
+asMultiple: FALSE
+asStatic: FALSE
