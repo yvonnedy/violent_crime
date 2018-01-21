@@ -21,13 +21,16 @@ ui <- fluidPage(
 )
 
 server <- function(input, output) {
-  output$linePlot <- renderPlot({
-    filtered <- dataset %>%
+  filtered <- reactive({
+    dataset %>%
       filter(department_name %in% input$citiesInput,
              year >= input$yearInput[1],
              year <= input$yearInput[2]
       )
-    ggplot(filtered, aes(x = year, y = violent_per_100k, colour = department_name)) +
+  })  
+  
+  output$linePlot <- renderPlot({
+    ggplot(filtered(), aes(x = year, y = violent_per_100k, colour = department_name)) +
       geom_line() +
       geom_point() +
       labs(x = "Year", y = "Violent Crimes Per 100,000 People", colour = "City") +
@@ -37,11 +40,7 @@ server <- function(input, output) {
   })
   
    output$resultsTable <- renderTable({
-    filtered2 <- dataset %>%
-      filter(department_name %in% input$citiesInput,
-             year >= input$yearInput[1],
-             year <= input$yearInput[2]
-      ) %>% 
+    filtered2 <- filtered() %>%
       select(year, department_name, total_pop, violent_per_100k, homs_per_100k, rape_per_100k, rob_per_100k, agg_ass_per_100k) %>% 
       rename(Year = year,
              City = department_name,
