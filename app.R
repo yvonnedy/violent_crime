@@ -1,9 +1,9 @@
-# Ying Dong, Jan 2017
-#
 # This script runs a Shiny app which aims to explore the rate of violent crimes over recent years in 68 US cities.
+#
+# Ying Dong, Jan 2017
 
 library(shiny)
-library(dplyr)
+library(tidyverse)
 library(ggplot2)
 
 dataset <- read_csv("data/ucr_crime_1975_2015.csv") 
