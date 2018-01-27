@@ -5,6 +5,7 @@
 library(shiny)
 library(tidyverse)
 library(ggplot2)
+library(plotly)
 
 dataset <- read_csv("data/ucr_crime_1975_2015.csv") 
 
@@ -27,8 +28,11 @@ ui <- fluidPage(
     ),
     
     mainPanel(
+      h4(textOutput("text")),
       
-      plotOutput("linePlot"),
+      br(), br(),
+      
+      plotlyOutput("linePlot"),
       
       br(), br(),
       
@@ -41,22 +45,32 @@ server <- function(input, output) {
   
   filtered <- reactive({
     dataset %>%
-      filter(department_name %in% input$citiesInput,
-             year >= input$yearInput[1],
-             year <= input$yearInput[2]) %>% 
-      rename(Crimes = violent_crime,
+      rename(City = department_name,
+             Year = year,
+             Crimes = violent_crime,
              Homicides = homs_sum,
              Rapes = rape_sum,
              Robberies = rob_sum,
-             Aggravated_Assaults = agg_ass_sum)
+             Aggravated_Assaults = agg_ass_sum) %>% 
+      filter(City %in% input$citiesInput,
+             Year >= input$yearInput[1],
+             Year <= input$yearInput[2]) 
   })
   
-  output$linePlot <- renderPlot({
+  output$text <- renderText({
+    rows <- nrow(filtered())
+    if(is.null(rows)){
+      rows <- 0
+    }
+    paste0("There are ",rows," records selected:")
+  })
+  
+  output$linePlot <- renderPlotly({
     
-    ggplot(filtered(), aes_string(x = "year", y = input$typeInput, colour = "department_name")) +
+    ggplot(filtered(), aes_string(x = "Year", y = input$typeInput, colour = "City")) +
       geom_line() +
       geom_point() +
-      labs(x = "Year", y = paste0("The Number Of ", input$typeInput), colour = "City") +
+      labs(x = "Year", y = input$typeInput, colour = "City") +
       ggtitle(paste0("The Number Of Total ", input$typeInput, " Over Years")) +
       theme_bw() +
       theme(plot.title = element_text(hjust = 0.5))
