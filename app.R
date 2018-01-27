@@ -12,8 +12,8 @@ ui <- fluidPage(
   titlePanel("US Violent Crimes Shiny Application"),
   sidebarLayout(
     sidebarPanel(
-      checkboxGroupInput("citiesInput", "Cities", choices = unique(dataset$department_name),
-                         inline = TRUE, selected = "Albuquerque, N.M."),
+      selectInput("citiesInput", "City", choices = sort(unique(dataset$department_name)), 
+                  selected = "Albuquerque, N.M.", multiple = TRUE),
       sliderInput("yearInput", "Year Range", min = 1975, max = 2015, step = 1, value = c(1975, 2015))
     ),
     mainPanel(
