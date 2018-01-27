@@ -23,7 +23,7 @@ ui <- fluidPage(
       
       radioButtons("typeInput", "Crime Type",
                    choices = c("Total Crime" = "Crimes", "Homicide" = "Homicides", "Rape" = "Rapes", 
-                               "Robbery" = "Robberies", "Aggravated Assault"="Aggravated_Assaults"),
+                               "Robbery" = "Robberies", "Aggravated Assault" = "Aggravated_Assaults"),
                    selected = "Crimes")
     ),
     
@@ -36,7 +36,11 @@ ui <- fluidPage(
       
       br(), br(),
       
-      tableOutput("resultsTable")
+      plotlyOutput("scatterPlot"),
+      
+      br(), br(),
+      
+      dataTableOutput("resultsTable")
     )
   )
 )
@@ -47,6 +51,7 @@ server <- function(input, output) {
     dataset %>%
       rename(City = department_name,
              Year = year,
+             Population = total_pop,
              Crimes = violent_crime,
              Homicides = homs_sum,
              Rapes = rape_sum,
@@ -66,7 +71,6 @@ server <- function(input, output) {
   })
   
   output$linePlot <- renderPlotly({
-    
     ggplot(filtered(), aes_string(x = "Year", y = input$typeInput, colour = "City")) +
       geom_line() +
       geom_point() +
@@ -76,21 +80,27 @@ server <- function(input, output) {
       theme(plot.title = element_text(hjust = 0.5))
   })
   
-  # output$resultsTable <- renderTable({
-  #   
-  #   filtered2 <- filtered() %>%
-  #     select(year, department_name, total_pop, violent_per_100k, homs_per_100k, rape_per_100k, rob_per_100k, agg_ass_per_100k) %>% 
-  #     rename(Year = year,
-  #            City = department_name,
-  #            Population = total_pop,
-  #            Total_crimes_rate = violent_per_100k,
-  #            Homicides_rate = homs_per_100k,
-  #            Rapes_rate = rape_per_100k,
-  #            Robberies_rate = rob_per_100k,
-  #            Aggravated_assaults_rate = agg_ass_per_100k) 
-  #   
-  #   filtered2
-  # })
+  output$scatterPlot <- renderPlotly({
+    ggplot(filtered(), aes_string(x = "Population", y = input$typeInput, colour = "City")) +
+      geom_point() +
+      labs(x = "Population", y = input$typeInput, colour = "City") +
+      ggtitle(paste0("The Number Of Total ", input$typeInput, " Over Population")) +
+      theme_bw() +
+      theme(plot.title = element_text(hjust = 0.5))
+  })
+  
+  output$resultsTable <- renderDataTable({
+
+    filtered2 <- filtered() %>%
+      select(Year, City, violent_per_100k, homs_per_100k, rape_per_100k, rob_per_100k, agg_ass_per_100k) %>%
+      rename("Total Crime Rate" = "violent_per_100k",
+             "Homicide Rate" = "homs_per_100k",
+             "Rape Rate" = "rape_per_100k",
+             "Robbery Rate" = "rob_per_100k",
+             "Aggravated Assault Rate" = "agg_ass_per_100k")
+
+    filtered2
+  })
 
 }
 
