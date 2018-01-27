@@ -34,11 +34,11 @@ server <- function(input, output) {
   })  
   
   output$linePlot <- renderPlot({
-    ggplot(filtered(), aes(x = year, y = violent_per_100k, colour = department_name)) +
+    ggplot(filtered(), aes(x = year, y = violent_crime, colour = department_name)) +
       geom_line() +
       geom_point() +
-      labs(x = "Year", y = "Violent Crimes Per 100,000 People", colour = "City") +
-      ggtitle("The Rate Of Violent Crime Over Years") +
+      labs(x = "Year", y = "Number Of Violent Crimes ", colour = "City") +
+      ggtitle("The Number Of Violent Crimes Over Years") +
       theme_bw() +
       theme(plot.title = element_text(hjust = 0.5))
   })
