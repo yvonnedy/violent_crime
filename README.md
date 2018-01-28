@@ -4,7 +4,7 @@
 
 This Shiny application is designed to explore the rate of violent crimes over recent years in US cities. It is hoped that users will find the safest city for them to live and study in the United States.    
      
-This project is developed based on the Marshall Violent Crime dataset, which contains crime data for 68 US cities from 1975-2015 covering four types of violent crimes (homicides, rape, robbery, and aggravated assault).
+This project is developed based on the [Marshall Violent Crime dataset](data/ucr_crime_1975_2015.csv), which contains crime data for 68 US cities from 1975-2015 covering four types of violent crimes (homicides, rape, robbery, and aggravated assault).
 
 
 ### Deployed Shiny Application
