@@ -48,6 +48,10 @@ ui <- fluidPage(
 server <- function(input, output) {
   
   filtered <- reactive({
+    if (is.null(input$citiesInput)) {
+      return(NULL)
+    } 
+    
     dataset %>%
       rename(City = department_name,
              Year = year,
@@ -59,7 +63,7 @@ server <- function(input, output) {
              Aggravated_Assaults = agg_ass_sum) %>% 
       filter(City %in% input$citiesInput,
              Year >= input$yearInput[1],
-             Year <= input$yearInput[2]) 
+             Year <= input$yearInput[2])
   })
   
   output$text <- renderText({
@@ -71,6 +75,10 @@ server <- function(input, output) {
   })
   
   output$linePlot <- renderPlotly({
+    if (is.null(filtered())) {
+      return()
+    }
+    
     ggplot(filtered(), aes_string(x = "Year", y = input$typeInput, colour = "City")) +
       geom_line() +
       geom_point() +
@@ -81,6 +89,10 @@ server <- function(input, output) {
   })
   
   output$scatterPlot <- renderPlotly({
+    if (is.null(filtered())) {
+      return()
+    }
+    
     ggplot(filtered(), aes_string(x = "Population", y = input$typeInput, colour = "City")) +
       geom_point() +
       labs(x = "Population", y = input$typeInput, colour = "City") +
@@ -90,6 +102,9 @@ server <- function(input, output) {
   })
   
   output$resultsTable <- renderDataTable({
+    if (is.null(filtered())) {
+      return()
+    }
 
     filtered2 <- filtered() %>%
       select(Year, City, violent_per_100k, homs_per_100k, rape_per_100k, rob_per_100k, agg_ass_per_100k) %>%
